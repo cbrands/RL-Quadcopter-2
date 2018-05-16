@@ -23,13 +23,13 @@ class Task():
     def get_reward(self):
         """Uses current position and velocity to get reward."""
 
-        alpha = 0.3
-        beta = 0.03
-        gamma = 0.01
+        alphaP = 0.3
+        alphaV = 0.03
+        alphaA = 0.01
         
-        reward = alpha * (1 - abs(np.tanh(np.linalg.norm(self.sim.pose[:3] - self.target_pos[:3]))))
-        reward += beta * (1 - abs(np.tanh(np.linalg.norm(self.sim.v - self.target_vel[:3]))))
-        reward += gamma * (1 - abs(np.tanh(np.linalg.norm(self.sim.angular_v - self.target_vel[3:]))))
+        reward = alphaP * (1 - np.tanh(np.linalg.norm(self.sim.pose[:3] - self.target_pos[:3])))
+        reward += alphaV * (1 - np.tanh(np.linalg.norm(self.sim.v - self.target_vel[:3])))
+        reward += alphaA * (1 - np.tanh(np.linalg.norm(self.sim.angular_v - self.target_vel[3:])))
 
         return reward
 
