@@ -12,24 +12,34 @@ class Task():
         self.action_repeat = 3
 
         self.action_low = 10
-        self.action_high = 800
+        self.action_high = 1000
         self.state_size = 18
         self.action_size = 4
 
-        # Target
-        self.target_pos = target_pos if target_pos is not None else np.array([0., 0., 10., 0., 0., 0.])
-        self.target_vel = np.array([0., 0., 0., 0., 0., 0.])
 
     def get_reward(self):
         """Uses current position and velocity to get reward."""
 
-        alphaP = 0.3
-        alphaV = 0.03
+        alphaP = 1.
+        alphaV = 1.
         alphaA = 0.01
         
-        reward = alphaP * (1 - np.tanh(np.linalg.norm(self.sim.pose[:3] - self.target_pos[:3])))
-        reward += alphaV * (1 - np.tanh(np.linalg.norm(self.sim.v - self.target_vel[:3])))
-        reward += alphaA * (1 - np.tanh(np.linalg.norm(self.sim.angular_v - self.target_vel[3:])))
+        reward = 0.
+        
+        # Reward movement in z direction
+        reward += alphaP * (self.sim.pose[2])
+        
+        #Reward velocity in z direction
+        reward += alphaV * (self.sim.v[2])
+        
+        # Penalizing movement in the x and y directions did not have a noticable effect 
+        # on the final result compared to rewarding movement in the z direction alone.
+        # Penalise sideways (x,y) position
+        #reward += alphaP * (1 - np.linalg.norm(self.sim.pose[:2] - [0., 0.]))
+        # Penalise sideways (x,y) velocity
+        #reward += alphaV * (1 - np.linalg.norm(self.sim.v[:2] - [0., 0.]))
+        # Penalise angular velocity
+        #reward += alphaA * (1 - np.linalg.norm(self.sim.angular_v - [0., 0., 0.]))
 
         return reward
 
