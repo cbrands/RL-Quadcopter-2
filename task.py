@@ -11,8 +11,8 @@ class Task():
         self.sim = PhysicsSim(init_pose, init_velocities, init_angle_velocities, time_limit)
         self.action_repeat = 3
 
-        self.action_low = 10
-        self.action_high = 1000
+        self.action_low = 450
+        self.action_high = 750
         self.state_size = 18
         self.action_size = 4
 
@@ -30,16 +30,18 @@ class Task():
         reward += alphaP * (self.sim.pose[2])
         
         #Reward velocity in z direction
-        reward += alphaV * (self.sim.v[2])
+        #reward += alphaV * (self.sim.v[2])
         
         # Penalizing movement in the x and y directions did not have a noticable effect 
         # on the final result compared to rewarding movement in the z direction alone.
         # Penalise sideways (x,y) position
-        #reward += alphaP * (1 - np.linalg.norm(self.sim.pose[:2] - [0., 0.]))
+        reward += 1 * (1 - np.linalg.norm(self.sim.pose[:2] - [0., 0.]))
         # Penalise sideways (x,y) velocity
-        #reward += alphaV * (1 - np.linalg.norm(self.sim.v[:2] - [0., 0.]))
+        #reward += 1 * (1 - np.linalg.norm(self.sim.v[:2] - [0., 0.]))
         # Penalise angular velocity
-        #reward += alphaA * (1 - np.linalg.norm(self.sim.angular_v - [0., 0., 0.]))
+        #reward += 1 * (1 - np.linalg.norm(self.sim.angular_v - [0., 0., 0.]))
+        # Penalise angular position
+        reward += 1 * (1 - np.linalg.norm(self.sim.pose[3:] - [0., 0., 0.]))
 
         return reward
 
@@ -47,6 +49,7 @@ class Task():
         """Perform next step."""
         reward = 0
         poses = []
+        #rotor_speeds = [rotor_speeds[0], rotor_speeds[0], rotor_speeds[0], rotor_speeds[0]]
         for _ in range(self.action_repeat):
             done = self.sim.next_timestep(rotor_speeds)
             reward += self.get_reward()
