@@ -22,7 +22,6 @@ class Task():
 
         alphaP = 1.
         alphaV = 1.
-        alphaA = 0.01
         
         reward = 0.
         
@@ -32,8 +31,6 @@ class Task():
         #Reward velocity in z direction
         #reward += alphaV * (self.sim.v[2])
         
-        # Penalizing movement in the x and y directions did not have a noticable effect 
-        # on the final result compared to rewarding movement in the z direction alone.
         # Penalise sideways (x,y) position
         reward += 1 * (1 - np.linalg.norm(self.sim.pose[:2] - [0., 0.]))
         # Penalise sideways (x,y) velocity
